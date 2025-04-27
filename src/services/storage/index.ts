@@ -1,25 +1,9 @@
 // src/services/storage/index.ts
 import { Post, StorageMethod, StorageServiceInterface } from '../../types';
-import { webStorage } from './webStorage';
 import { electronStorage } from './electronStorage';
 
-/**
- * Factory function to get the appropriate storage service
- * based on the environment and options
- */
-export function getStorageService(method?: StorageMethod): StorageServiceInterface {
-  // Auto-detect if method is not specified
-  if (!method) {
-    method = typeof window !== 'undefined' && window.electron !== undefined 
-      ? 'electron' 
-      : 'localStorage';
-  }
-  
-  return method === 'electron' ? electronStorage : webStorage;
-}
-
-// src/services/storage/webStorage.ts
-export const webStorage: StorageServiceInterface = {
+// Local implementation of webStorage for browser localStorage
+const webStorage: StorageServiceInterface = {
   async getPosts(): Promise<Post[]> {
     try {
       const postsString = localStorage.getItem('community-forum-posts');
@@ -56,17 +40,25 @@ export const webStorage: StorageServiceInterface = {
         }
         
         if (post.replies && post.replies.length > 0) {
-          post.replies = post.replies.map(reply => 
-            reply.id === postId 
-              ? { ...reply, isDeleted: true } 
-              : reply
-          );
+          return {
+            ...post,
+            replies: post.replies.map(reply => 
+              reply.id === postId 
+                ? { ...reply, isDeleted: true } 
+                : reply
+            )
+          };
         }
         return post;
       });
       
+      // Filter out deleted posts for the returned result
+      const filteredPosts = updatedPosts.filter(post => !post.isDeleted);
+      
+      // Save the updated posts (including soft-deleted ones marked with isDeleted)
       await this.savePosts(updatedPosts);
-      return updatedPosts.filter(post => !post.isDeleted);
+      
+      return filteredPosts;
     } catch (error) {
       console.error('Error deleting post:', error);
       return await this.getPosts();
@@ -74,51 +66,80 @@ export const webStorage: StorageServiceInterface = {
   },
   
   async likePost(postId: string, userId: string): Promise<void> {
-    const posts = await this.getPosts();
-    
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        if (!post.likedBy.includes(userId)) {
+    try {
+      const posts = await this.getPosts();
+      
+      const updatedPosts = posts.map(post => {
+        if (post.id === postId) {
+          if (!post.likedBy.includes(userId)) {
+            return {
+              ...post,
+              likes: post.likes + 1,
+              likedBy: [...post.likedBy, userId]
+            };
+          }
+          return post;
+        }
+        
+        if (post.replies && post.replies.length > 0) {
           return {
             ...post,
-            likes: post.likes + 1,
-            likedBy: [...post.likedBy, userId]
+            replies: post.replies.map(reply => {
+              if (reply.id === postId && !reply.likedBy.includes(userId)) {
+                return {
+                  ...reply,
+                  likes: reply.likes + 1,
+                  likedBy: [...reply.likedBy, userId]
+                };
+              }
+              return reply;
+            })
           };
         }
         return post;
-      }
+      });
       
-      if (post.replies && post.replies.length > 0) {
-        post.replies = post.replies.map(reply => {
-          if (reply.id === postId && !reply.likedBy.includes(userId)) {
-            return {
-              ...reply,
-              likes: reply.likes + 1,
-              likedBy: [...reply.likedBy, userId]
-            };
-          }
-          return reply;
-        });
-      }
-      return post;
-    });
-    
-    await this.savePosts(updatedPosts);
+      await this.savePosts(updatedPosts);
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
   },
   
   async addReply(parentId: string, reply: Post): Promise<void> {
-    const posts = await this.getPosts();
-    
-    const updatedPosts = posts.map(post => {
-      if (post.id === parentId) {
-        return {
-          ...post,
-          replies: [...post.replies, reply]
-        };
-      }
-      return post;
-    });
-    
-    await this.savePosts(updatedPosts);
+    try {
+      const posts = await this.getPosts();
+      
+      const updatedPosts = posts.map(post => {
+        if (post.id === parentId) {
+          return {
+            ...post,
+            replies: [...post.replies, reply]
+          };
+        }
+        return post;
+      });
+      
+      await this.savePosts(updatedPosts);
+    } catch (error) {
+      console.error('Error adding reply:', error);
+    }
   }
 };
+
+/**
+ * Factory function to get the appropriate storage service
+ * based on the environment and options
+ */
+export function getStorageService(method?: StorageMethod): StorageServiceInterface {
+  // Auto-detect if method is not specified
+  if (!method) {
+    method = typeof window !== 'undefined' && window.electron !== undefined 
+      ? 'electron' 
+      : 'localStorage';
+  }
+  
+  return method === 'electron' ? electronStorage : webStorage;
+}
+
+// Export webStorage for testing or direct usage
+export { webStorage, electronStorage };

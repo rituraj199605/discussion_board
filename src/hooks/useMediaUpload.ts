@@ -1,7 +1,6 @@
 // src/hooks/useMediaUpload.ts
 import { useState, useCallback } from 'react';
 import { MediaFile } from '../types';
-import { createHash } from 'crypto';
 
 interface UseMediaUploadOptions {
   maxFiles?: number;

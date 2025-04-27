@@ -1,7 +1,7 @@
 // src/components/posts/PostDetailView.tsx
 import React, { useState } from 'react';
 import { User, MessageCircle, Heart, Reply, Trash2, ArrowLeft, AlertTriangle } from 'lucide-react';
-import { Post } from '../../types';
+import { Post, MediaFile } from '../../types';
 import Button from '../common/Button';
 import ReplyItem from './ReplyItem';
 import PostComposer from './PostComposer';
@@ -57,6 +57,14 @@ const PostDetailView: React.FC<PostDetailViewProps> = ({
   
   const toggleReplyForm = () => {
     setIsReplying(!isReplying);
+  };
+  
+  const handleSubmitReply = (_text: string, _media: MediaFile[]) => {
+    // In a real implementation, this would use the text and media
+    if (currentUser) {
+      onReply(post);
+      setIsReplying(false);
+    }
   };
   
   return (
@@ -166,12 +174,7 @@ const PostDetailView: React.FC<PostDetailViewProps> = ({
         {isReplying && (
           <div className="mb-6">
             <PostComposer 
-              onSubmit={(text, media) => {
-                if (currentUser) {
-                  onReply(post);
-                  setIsReplying(false);
-                }
-              }}
+              onSubmit={handleSubmitReply}
               replyingTo={post}
               onCancelReply={() => setIsReplying(false)}
             />

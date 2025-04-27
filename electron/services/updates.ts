@@ -79,7 +79,7 @@ export function setupAutoUpdates(): void {
       
       if (verifyUpdateSignature(updateInfo)) {
         const dialogOpts = {
-          type: 'info',
+          type: 'info' as const,  // Fixed: specify a valid literal type
           buttons: ['Restart', 'Later'],
           title: 'Application Update',
           message: process.platform === 'win32' ? releaseNotes : releaseName,

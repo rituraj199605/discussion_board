@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, Trash2, Reply, User, Clock, Heart, ChevronDown, ChevronUp } from 'lucide-react';
 import { Post } from '../../types';
-import Button from '../common/Button';
 import { useAuth } from '../../context/AuthContext';
 import ReplyItem from './ReplyItem';
 

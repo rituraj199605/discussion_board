@@ -1,6 +1,6 @@
 // src/components/layout/Footer.tsx
 import React, { useState } from 'react';
-import { Mail, GitHub, Shield } from 'lucide-react';
+import { Mail, Github, Shield } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
                 className="text-slate-300 hover:text-white transition-colors"
                 aria-label="GitHub"
               >
-                <GitHub size={20} />
+                <Github size={20} />
               </a>
               <a 
                 href="#" 

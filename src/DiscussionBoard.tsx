@@ -1,6 +1,20 @@
 // src/DiscussionBoard.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, Send, Trash2, Reply, User, Clock, MessageSquare, Heart, Edit, ChevronDown, ChevronUp } from 'lucide-react';
+import { 
+  MessageCircle, 
+  Send, 
+  Trash2, 
+  Reply, 
+  User, 
+  Clock, 
+  MessageSquare, 
+  Heart, 
+  Edit, 
+  ChevronDown, 
+  ChevronUp,
+  Image, 
+  X 
+} from 'lucide-react';
 
 // Type for Post (previously Tweet)
 interface Post {

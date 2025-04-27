@@ -1,19 +1,25 @@
-// tweet-app/src/electron.d.ts
+// src/electron.d.ts
 interface ElectronAPI {
-    tweetStorage: {
-      getTweets: () => Promise<any[]>;
-      saveTweets: (tweets: any[]) => Promise<boolean>;
-      deleteTweet: (tweetId: number) => Promise<any[]>;
-    };
-    fileSystem: {
-      saveFile: (content: string, defaultPath: string) => Promise<string | null>;
-    };
+  tweetStorage: {
+    getTweets: () => Promise<any[]>;
+    saveTweets: (posts: any[]) => Promise<boolean>;
+    deleteTweet: (postId: string) => Promise<any[]>;
+    likePost: (postId: string, userId: string) => Promise<boolean>;
+  };
+  system: {
+    version: string;
+    platform: string;
+  };
+  app: {
+    version: string;
+    name: string;
+  };
+}
+
+declare global {
+  interface Window {
+    electron: ElectronAPI;
   }
-  
-  declare global {
-    interface Window {
-      electron: ElectronAPI;
-    }
-  }
-  
-  export {};
+}
+
+export {};

@@ -1,6 +1,6 @@
 // src/hooks/useStorage.ts
 import { useState, useCallback } from 'react';
-import { Post, StorageServiceInterface, StorageMethod, StorageOptions } from '../types';
+import { Post, StorageMethod } from '../types';
 import { getStorageService } from '../services/storage';
 
 interface UseStorageResult {
@@ -20,8 +20,7 @@ interface UseStorageResult {
  * Works with both Electron and web storage
  */
 export function useStorage(
-  method?: StorageMethod,
-  options: StorageOptions = {}
+  method?: StorageMethod
 ): UseStorageResult {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);

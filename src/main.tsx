@@ -1,7 +1,7 @@
 // src/main.tsx
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './styles/tailwind.css';
+import './index.css'; // Fixed import path
 import App from './App';
 
 // Security: Create a robust CSP meta tag for web version

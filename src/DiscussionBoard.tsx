@@ -9,7 +9,6 @@ import {
   Clock, 
   MessageSquare, 
   Heart, 
-  Edit, 
   ChevronDown, 
   ChevronUp,
   Image, 
@@ -18,13 +17,13 @@ import {
 
 // Type for Post (previously Tweet)
 interface Post {
-  id: number;
+  id: string; // Changed from number to string
   text: string;
   author: string;
   timestamp: string;
   likes: number;
   replies: Post[];
-  parentId?: number;
+  parentId?: string; // Changed from number to string
   media?: MediaFile[];
 }
 
@@ -45,7 +44,7 @@ export default function DiscussionBoard() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [replyingTo, setReplyingTo] = useState<Post | null>(null);
-  const [expandedPosts, setExpandedPosts] = useState<Record<number, boolean>>({});
+  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
   
   const imageInputRef = useRef<HTMLInputElement>(null);
   
@@ -99,7 +98,7 @@ export default function DiscussionBoard() {
     
     // Create the new post
     const newPost: Post = {
-      id: Date.now(),
+      id: Date.now().toString(), // Convert to string
       text: postText,
       author: authorName,
       timestamp: new Date().toLocaleString(),
@@ -110,24 +109,25 @@ export default function DiscussionBoard() {
     };
     
     // Update the posts structure
+    let updatedPosts: Post[];
     if (replyingTo) {
       // This is a reply, add it to the parent post's replies
-      const updatedPosts = savedPosts.map(post => {
+      updatedPosts = savedPosts.map(post => {
         if (post.id === replyingTo.id) {
           return { ...post, replies: [...post.replies, newPost] };
         }
         return post;
       });
-      setSavedPosts(updatedPosts);
     } else {
       // This is a top-level post
-      const updatedPosts = [newPost, ...savedPosts];
-      setSavedPosts(updatedPosts);
+      updatedPosts = [newPost, ...savedPosts];
     }
+    
+    setSavedPosts(updatedPosts);
     
     // Save to Electron storage if available
     if (isElectron) {
-      window.electron.tweetStorage.saveTweets(savedPosts)
+      window.electron.tweetStorage.saveTweets(updatedPosts)
         .catch(err => console.error('Failed to save posts to Electron storage:', err));
     }
     
@@ -162,7 +162,7 @@ export default function DiscussionBoard() {
     setMediaFiles(mediaFiles.filter(file => file.id !== id));
   };
   
-  const handleDeletePost = (id: number) => {
+  const handleDeletePost = (id: string) => {
     // Find if this is a top-level post or a reply
     const isTopLevel = savedPosts.some(post => post.id === id);
     
@@ -204,14 +204,14 @@ export default function DiscussionBoard() {
     document.getElementById('post-composer')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const toggleReplies = (postId: number) => {
+  const toggleReplies = (postId: string) => {
     setExpandedPosts(prev => ({
       ...prev,
       [postId]: !prev[postId]
     }));
   };
 
-  const handleLikePost = (postId: number) => {
+  const handleLikePost = (postId: string) => {
     const updatedPosts = savedPosts.map(post => {
       if (post.id === postId) {
         return { ...post, likes: post.likes + 1 };
@@ -417,10 +417,10 @@ export default function DiscussionBoard() {
 
 interface PostCardProps {
   post: Post;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   onReply: (post: Post) => void;
   onViewDetail: (post: Post) => void;
-  onLike: (id: number) => void;
+  onLike: (id: string) => void;
   isExpanded: boolean;
   onToggleExpand: () => void;
 }
@@ -607,9 +607,9 @@ function PostCard({ post, onDelete, onReply, onViewDetail, onLike, isExpanded, o
 interface PostDetailViewProps {
   post: Post | null;
   onBack: () => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   onReply: (post: Post) => void;
-  onLike: (id: number) => void;
+  onLike: (id: string) => void;
 }
 
 function PostDetailView({ post, onBack, onDelete, onReply, onLike }: PostDetailViewProps) {

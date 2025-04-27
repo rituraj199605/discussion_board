@@ -23,7 +23,7 @@ const PostComposer: React.FC<PostComposerProps> = ({
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
-  const { currentUser, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   
   const MAX_CHARS = 500;
   const charsRemaining = MAX_CHARS - postText.length;

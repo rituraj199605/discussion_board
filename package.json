@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "electron:dev": "cross-env NODE_ENV=development ELECTRON_START_URL=http://localhost:5173 concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:build": "npm run build && electron-builder",
-    "electron:start": "electron ."
+    "electron:start": "electron .",
+    "preelectron:build": "tsc -p electron/tsconfig.electron.json"
   },
   "build": {
     "appId": "com.communityforum.app",
@@ -37,6 +38,7 @@
     }
   },
   "dependencies": {
+    "electron-store": "^10.0.1",
     "lucide-react": "^0.503.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -52,7 +54,6 @@
     "electron": "^30.5.1",
     "electron-builder": "^24.13.3",
     "electron-squirrel-startup": "^1.0.1",
-    "electron-store": "^10.0.1",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",

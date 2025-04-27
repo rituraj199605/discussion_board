@@ -105,3 +105,6 @@ temp/
 .vs/
 *.njsproj
 *.sln
+
+# TypeScript output
+dist-electron/

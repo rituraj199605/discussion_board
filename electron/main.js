@@ -50,18 +50,23 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.whenReady().then(async () => {
-  // Dynamically import electron-store (ES Module)
-  const { default: Store } = await import('electron-store');
-  
-  // Initialize store for persistent storage
-  store = new Store({
-    name: 'community-forum',
-    defaults: {
-      savedPosts: []
-    }
-  });
+  try {
+    // Dynamically import electron-store (ES Module)
+    const Store = require('electron-store');
+    
+    // Initialize store for persistent storage
+    store = new Store({
+      name: 'community-forum',
+      defaults: {
+        savedPosts: []
+      }
+    });
 
-  createWindow();
+    createWindow();
+  } catch (error) {
+    console.error('Error initializing store:', error);
+    createWindow();
+  }
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
@@ -83,13 +88,18 @@ app.on('window-all-closed', () => {
 // Renamed from getTweets to getPosts to reflect new functionality
 ipcMain.handle('getPosts', async () => {
   if (!store) {
-    const { default: Store } = await import('electron-store');
-    store = new Store({
-      name: 'community-forum',
-      defaults: {
-        savedPosts: []
-      }
-    });
+    try {
+      const Store = require('electron-store');
+      store = new Store({
+        name: 'community-forum',
+        defaults: {
+          savedPosts: []
+        }
+      });
+    } catch (error) {
+      console.error('Error initializing store:', error);
+      return [];
+    }
   }
   return store.get('savedPosts');
 });
@@ -97,13 +107,18 @@ ipcMain.handle('getPosts', async () => {
 // Renamed from saveTweets to savePosts
 ipcMain.handle('savePosts', async (event, posts) => {
   if (!store) {
-    const { default: Store } = await import('electron-store');
-    store = new Store({
-      name: 'community-forum',
-      defaults: {
-        savedPosts: []
-      }
-    });
+    try {
+      const Store = require('electron-store');
+      store = new Store({
+        name: 'community-forum',
+        defaults: {
+          savedPosts: []
+        }
+      });
+    } catch (error) {
+      console.error('Error initializing store:', error);
+      return false;
+    }
   }
   store.set('savedPosts', posts);
   return true;
@@ -112,13 +127,18 @@ ipcMain.handle('savePosts', async (event, posts) => {
 // Renamed from deleteTweet to deletePost
 ipcMain.handle('deletePost', async (event, postId) => {
   if (!store) {
-    const { default: Store } = await import('electron-store');
-    store = new Store({
-      name: 'community-forum',
-      defaults: {
-        savedPosts: []
-      }
-    });
+    try {
+      const Store = require('electron-store');
+      store = new Store({
+        name: 'community-forum',
+        defaults: {
+          savedPosts: []
+        }
+      });
+    } catch (error) {
+      console.error('Error initializing store:', error);
+      return [];
+    }
   }
   const posts = store.get('savedPosts');
   
@@ -137,4 +157,68 @@ ipcMain.handle('deletePost', async (event, postId) => {
   
   store.set('savedPosts', updatedPosts);
   return updatedPosts;
+});
+
+// Add like functionality
+ipcMain.handle('likePost', async (event, data) => {
+  if (!store) {
+    try {
+      const Store = require('electron-store');
+      store = new Store({
+        name: 'community-forum',
+        defaults: {
+          savedPosts: []
+        }
+      });
+    } catch (error) {
+      console.error('Error initializing store:', error);
+      return false;
+    }
+  }
+  
+  try {
+    const { postId, userId } = data;
+    if (!postId || !userId) {
+      return false;
+    }
+    
+    const posts = store.get('savedPosts');
+    
+    const updatedPosts = posts.map(post => {
+      if (post.id === postId) {
+        if (!post.likedBy.includes(userId)) {
+          return {
+            ...post,
+            likes: post.likes + 1,
+            likedBy: [...post.likedBy, userId]
+          };
+        }
+        return post;
+      }
+      
+      if (post.replies && post.replies.length > 0) {
+        return {
+          ...post,
+          replies: post.replies.map(reply => {
+            if (reply.id === postId && !reply.likedBy.includes(userId)) {
+              return {
+                ...reply,
+                likes: reply.likes + 1,
+                likedBy: [...reply.likedBy, userId]
+              };
+            }
+            return reply;
+          })
+        };
+      }
+      
+      return post;
+    });
+    
+    store.set('savedPosts', updatedPosts);
+    return true;
+  } catch (error) {
+    console.error('Error liking post:', error);
+    return false;
+  }
 });

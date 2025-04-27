@@ -1,15 +1,6 @@
 // electron/preload.ts
 import { contextBridge, ipcRenderer } from 'electron';
 
-// Secure IPC channels - whitelist of allowed channels
-const validChannels = [
-  'getPosts',
-  'savePosts',
-  'deletePost',
-  'likePost',
-  'addReply'
-];
-
 // Input validation helpers
 const isValidPostId = (id: string): boolean => {
   return typeof id === 'string' && id.trim().length > 0;
@@ -26,11 +17,11 @@ contextBridge.exposeInMainWorld(
     // For persistent storage
     tweetStorage: {
       // Only expose specific functions with validation
-      getTweets: async () => {
+      getTweets: async (): Promise<any[]> => {
         return await ipcRenderer.invoke('getPosts');
       },
       
-      saveTweets: async (posts: any) => {
+      saveTweets: async (posts: any): Promise<boolean> => {
         // Validate posts before sending to main process
         if (!isValidPostsArray(posts)) {
           console.error('Invalid posts data');
@@ -39,7 +30,7 @@ contextBridge.exposeInMainWorld(
         return await ipcRenderer.invoke('savePosts', posts);
       },
       
-      deleteTweet: async (postId: string) => {
+      deleteTweet: async (postId: string): Promise<any[]> => {
         // Validate postId before sending to main process
         if (!isValidPostId(postId)) {
           console.error('Invalid post ID');
@@ -48,7 +39,7 @@ contextBridge.exposeInMainWorld(
         return await ipcRenderer.invoke('deletePost', postId);
       },
       
-      likePost: async (postId: string, userId: string) => {
+      likePost: async (postId: string, userId: string): Promise<boolean> => {
         // Validate inputs
         if (!isValidPostId(postId) || !isValidPostId(userId)) {
           console.error('Invalid post or user ID');

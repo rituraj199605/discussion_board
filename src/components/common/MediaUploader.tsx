@@ -1,6 +1,6 @@
 // src/components/common/MediaUploader.tsx
 import React, { useRef, useState } from 'react';
-import { Image, Video, X, File, AlertTriangle } from 'lucide-react';
+import { Image, X, AlertTriangle } from 'lucide-react';
 import { MediaFile } from '../../types';
 import { useMediaUpload } from '../../hooks/useMediaUpload';
 

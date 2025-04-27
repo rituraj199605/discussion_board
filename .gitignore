@@ -1,0 +1,107 @@
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+.yarn-integrity
+
+# TypeScript cache
+*.tsbuildinfo
+.npm
+
+# Electron build output
+dist/
+dist-electron/
+build/
+release/
+out/
+output/
+
+# Vite build caches
+.vite/
+
+# Environment variables and secrets
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+*.env.js
+.npmrc
+.yarnrc
+config.json
+secrets.json
+**/config/secrets.*
+
+# API keys and private credentials
+**/credentials/
+**/certs/
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+
+# Local development files
+*.local
+local.settings.json
+
+# Debug and logging
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Testing artifacts
+coverage/
+.nyc_output
+.test/
+
+# Editor and IDE files
+.idea/
+.vscode/
+.vscode-test
+*.swp
+*.swo
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Electron auto update files
+app-update.yml
+dev-app-update.yml
+
+# Temporary files
+.tmp/
+.temp/
+tmp/
+temp/
+*.tmp
+
+# Platform specific build files
+*.dmg
+*.app
+*.exe
+*.msi
+*.zip
+*.deb
+*.rpm
+*.AppImage
+*.snap
+
+# VisualStudio specific
+.vs/
+*.njsproj
+*.sln

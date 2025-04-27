@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#F8FAFC"/>
+  
+  <!-- Leaf shape -->
+  <path d="M256 448C353.744 448 432 369.744 432 272C432 174.256 256 64 256 64C256 64 80 174.256 80 272C80 369.744 158.256 448 256 448Z" fill="#F4B183" fill-opacity="0.7"/>
+  
+  <!-- Leaf vein -->
+  <path d="M256 448C256 448 256 240 256 160C256 80 256 64 256 64C256 64 80 174.256 80 272C80 369.744 158.256 448 256 448Z" fill="#E59C6B" fill-opacity="0.5"/>
+  
+  <!-- Tweet bubble -->
+  <circle cx="256" cy="250" r="100" fill="white"/>
+  <path d="M216 210C216 204.477 220.477 200 226 200H286C291.523 200 296 204.477 296 210V270C296 275.523 291.523 280 286 280H226C220.477 280 216 275.523 216 270V210Z" fill="#F4B183" fill-opacity="0.3"/>
+  
+  <!-- Tweet lines -->
+  <rect x="226" y="220" width="60" height="4" rx="2" fill="#94A3B8"/>
+  <rect x="226" y="230" width="50" height="4" rx="2" fill="#94A3B8"/>
+  <rect x="226" y="240" width="40" height="4" rx="2" fill="#94A3B8"/>
+</svg>
